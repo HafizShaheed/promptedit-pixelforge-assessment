@@ -19,8 +19,8 @@ generation cost, and charges the user the Pixelforge cost **plus a 25% markup**.
 
 ## Submission details
 
-- **Deployed URL:** `https://web-production-9d2d4ec9.up.railway.app` _(to be filled in at submission)_
-- **Pixelforge account email:** `PIXELFORGE_ACCOUNT_EMAIL` _(to be filled in at submission)_
+- **Deployed URL:** `https://web-production-9d2d4ec9.up.railway.app`
+- **Pixelforge account email:** `PIXELFORGE_ACCOUNT_EMAIL`
 - **Webhook URL:** `https://<your-domain>/webhooks/pixelforge`
 
 ## Requirements
