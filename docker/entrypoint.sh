@@ -40,6 +40,11 @@ fi
 
 chown -R www-data:www-data storage bootstrap/cache || true
 
+# Railway (and similar platforms) inject the port to listen on as $PORT.
+if [ "$ROLE" != "worker" ]; then
+    sed -i "s/listen 8080/listen ${PORT:-8080}/" /etc/nginx/sites-available/default
+fi
+
 # --- Run ---------------------------------------------------------------------
 case "$ROLE" in
     worker)

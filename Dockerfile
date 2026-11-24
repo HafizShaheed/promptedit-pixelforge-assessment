@@ -13,7 +13,16 @@
 #     the same database (e.g. managed Postgres) — see DEPLOY.md.
 # ---------------------------------------------------------------------------
 
-# --- Stage 1: build the Vue/Inertia front-end assets -----------------------
+# --- Stage 1: production PHP dependencies ----------------------------------
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --no-interaction \
+        --no-scripts --optimize-autoloader
+
+# --- Stage 2: build the Vue/Inertia front-end assets -----------------------
+# resources/js/app.js imports ZiggyVue from vendor/tightenco/ziggy, so the
+# Ziggy package must be present in this stage before `npm run build`.
 FROM node:22-alpine AS assets
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -21,14 +30,8 @@ RUN npm ci --no-audit --no-fund
 COPY vite.config.js jsconfig.json postcss.config.js tailwind.config.js ./
 COPY resources ./resources
 COPY public ./public
+COPY --from=vendor /app/vendor/tightenco/ziggy ./vendor/tightenco/ziggy
 RUN npm run build
-
-# --- Stage 2: production PHP dependencies ----------------------------------
-FROM composer:2 AS vendor
-WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction \
-        --no-scripts --optimize-autoloader
 
 # --- Stage 3: runtime -------------------------------------------------------
 FROM php:8.3-fpm-bookworm AS runtime
